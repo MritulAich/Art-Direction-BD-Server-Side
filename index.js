@@ -27,14 +27,26 @@ async function run() {
     // await client.connect();
     // Send a ping to confirm a successful connection
 
-    const galleryCollection = client.db('artDB').collection('gallery');
+    const galleryCollection = client.db('artistDB').collection('pictures');
 
-    app.get('/gallery', async(req,res)=>{
-        const cursor = galleryCollection.find();
-        const result = await cursor.toArray();
-        res.send(result)
+    app.get('/gallery', async (req, res) => {
+      const cursor = galleryCollection.find();
+      const result = await cursor.toArray();
+      res.send(result)
     })
 
+
+     //--search functionality--
+
+    app.get('/search', async (req, res) => {
+      const query = req.query.q;
+      const searchResult = await galleryCollection.find({
+        eventType: { $regex: query, $options: 'i' }
+      }).toArray();
+      res.json(searchResult)
+    })
+
+    
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
@@ -45,9 +57,9 @@ async function run() {
 run().catch(console.dir);
 
 
-app.get('/', (req,res)=>{
-    res.send('Art Server is running')
+app.get('/', (req, res) => {
+  res.send('Art Server is running')
 })
-app.listen(port,()=>{
-    console.log(`Server is running on port ${port}`);
+app.listen(port, () => {
+  console.log(`Server is running on port ${port}`);
 })
