@@ -27,7 +27,8 @@ async function run() {
     // await client.connect();
     // Send a ping to confirm a successful connection
 
-    const galleryCollection = client.db('artistDB').collection('pictures');
+
+    const galleryCollection = client.db('artDB').collection('gallery');
 
     app.get('/gallery', async (req, res) => {
       const cursor = galleryCollection.find();
@@ -35,9 +36,7 @@ async function run() {
       res.send(result)
     })
 
-
      //--search functionality--
-
     app.get('/search', async (req, res) => {
       const query = req.query.q;
       const searchResult = await galleryCollection.find({
@@ -46,7 +45,26 @@ async function run() {
       res.json(searchResult)
     })
 
-    
+
+    const bookingCollection = client.db('artDB').collection('booking');
+
+    app.post('/booking', async(req,res)=>{
+      const newBooking = req.body;
+      const result = await bookingCollection.insertOne(newBooking);
+      res.send(result);
+    })
+    app.get('/booking', async (req, res) => {
+      const cursor = bookingCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    })
+
+
+
+
+
+
+
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
