@@ -53,11 +53,14 @@ async function run() {
       const result = await bookingCollection.insertOne(newBooking);
       res.send(result);
     })
-    app.get('/booking', async (req, res) => {
-      const cursor = bookingCollection.find();
-      const result = await cursor.toArray();
-      res.send(result);
+
+    //email based booking
+    app.get('/booking', async(req,res)=>{
+      const email = req.query.email;
+      const booking = await bookingCollection.find({email}).toArray();
+      res.send(booking)
     })
+
     app.delete('/booking/:id', async(req,res)=>{
       const id = req.params.id;
       const query = {_id: new ObjectId(id)};
