@@ -65,7 +65,37 @@ async function run() {
       res.send(result);
     })
 
+    //update
+    app.get('/booking/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) }
+      const result = await bookingCollection.findOne(query);
+      res.send(result);
+    })
 
+    app.put('/booking/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const options = { upsert: true };
+      const updatedPage = req.body;
+
+      const booking = {
+        $set: {
+          phone: updatedPage.phone,
+          date: updatedPage.date,
+          time: updatedPage.time,
+          service: updatedPage.service,
+          photographyPackage: updatedPage.photographyPackage,
+          cinematographyPackage: updatedPage.cinematographyPackage,
+          comboPackage: updatedPage.comboPackage,
+          standardType: updatedPage.standardType,
+          premiumType: updatedPage.premiumType,
+          signatureType: updatedPage.signatureType
+        }
+      }
+      const result = await bookingCollection.updateOne(filter, booking, options);
+      res.send(result)
+    })
 
 
 
